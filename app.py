@@ -48,7 +48,11 @@ if clasificaciones:
 if locales:
     df_filtrado = df_filtrado[df_filtrado['Local'].isin(locales)]
 if busqueda:
-    df_filtrado = df_filtrado[df_filtrado['Descripcion'].str.contains(busqueda, case=False)]
+    busqueda = busqueda.strip().lower()
+    df_filtrado = df_filtrado[
+        df_filtrado["Descripcion"].str.lower().str.contains(busqueda, na=False) |
+        df_filtrado["Codigo"].astype(str).str.contains(busqueda)
+    ]
 
 # -------------------- Botón limpiar --------------------
 if st.button("🧹 Limpiar selección de productos"):
