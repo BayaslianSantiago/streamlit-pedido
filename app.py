@@ -40,7 +40,7 @@ st.title("🛒 Lista de Productos a Pedir")
 # -------------------- Filtros --------------------
 clasificaciones = st.multiselect("Filtrar por Clasificación", options=sorted(df['Clasificacion'].unique()))
 locales = st.multiselect("Filtrar por Ubicación (Local)", options=sorted(df['Local'].unique()))
-busqueda = st.text_input("🔍 Buscar producto por nombre")
+busqueda = st.text_input("🔍 Buscar producto por nombre/codigo")
 
 df_filtrado = df.copy()
 if clasificaciones:
@@ -93,3 +93,35 @@ if not df_seleccionados.empty:
     )
 else:
     st.info("No hay productos marcados para descargar.")
+
+# -------------------- Formulario para Productos Nuevos --------------------
+
+st.markdown("### ➕ Agregar nuevo producto")
+
+with st.form("formulario_agregar"):
+    nuevo_codigo = st.text_input("Código")
+    nueva_descripcion = st.text_input("Descripción")
+    nueva_clasificacion = st.text_input("Clasificación")
+    nuevo_local = st.text_input("Local")
+
+    submitted = st.form_submit_button("Agregar producto")
+
+    if submitted:
+        if nuevo_codigo and nueva_descripcion:
+            nuevo_producto = {
+                "Codigo": nuevo_codigo,
+                "Descripcion": nueva_descripcion,
+                "Clasificacion": nueva_clasificacion,
+                "Local": nuevo_local
+            }
+
+            # Agregar a dataframe
+            df = pd.concat([df, pd.DataFrame([nuevo_producto])], ignore_index=True)
+
+            # Opcional: guardar en CSV o Excel
+            df.to_excel("Mercaderia del Local.xlsx", index=False)
+
+            st.success("✅ Producto agregado con éxito.")
+        else:
+            st.warning("⚠️ Código y Descripción son obligatorios.")
+
